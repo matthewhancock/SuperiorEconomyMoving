@@ -2,7 +2,105 @@
 
 Extracted from `superioreconomymoving-com.zip` (cPanel backup of `superioreconomymoving.com`, dated 2022-08-16). This document records what business logic existed on the legacy PHP site, what data lives off-site, what was reproduced in the new static site, and what still needs follow-up before launch.
 
-> **Brand rename (2026-05-24):** The business is rebranded from **Superior Economy Moving** to **Superior Moving Co.** (formal name) / **Superior Moving** (common name). All new pages use the new name. The legacy backup, the existing `superioreconomymoving.com` domain, and identifiers like the BCA report URL (`/superior-moving-13061994`), the Instagram handle `@superioreconomymoving`, and the email `jack@economymoving.net` still carry the old branding — those are operational identifiers and stay as-is until each is migrated. The canonical URL placeholder in `<link rel="canonical">` is currently `https://superioreconomymoving.com/`; **decide the new primary domain before launch** and update the canonicals in one pass.
+> **Brand rename (2026-05-24):** The business is rebranded from **Superior Economy Moving** to **Superior Moving Co.** (formal name) / **Superior Moving** (common name). All new pages use the new name. The legacy backup, the existing `superioreconomymoving.com` domain, and identifiers like the BCA report URL (`/superior-moving-13061994`), the Instagram handle `@superioreconomymoving`, and the email `jack@economymoving.net` still carry the old branding — those are operational identifiers and stay as-is until each is migrated.
+
+> **Canonical domain (2026-05-24):** `superiormoving.la` is now the canonical primary domain. Legacy domains (`superioreconomymoving.com`, `superioreconomymoving.net`, `economymoving.net` — and their `www.` variants) are 301-redirected to `superiormoving.la` by the API's `DomainRedirectMiddleware` (configured under `Features.Redirects` in `api/appsettings.json`). The `<link rel="canonical">` tags across the static pages still point at `superioreconomymoving.com` — sweep them to `superiormoving.la` in a follow-up commit before driving search traffic.
+
+> **Architecture (2026-05-24):** The site has been moved off pure-static hosting onto an ASP.NET Core API (`api/`, .NET 10 preview, minimal API + top-level statements, matching the Vocab-Static convention set). The static HTML pages live under `api/wwwroot/superior-moving/` (network-id prefix, also matching Vocab-Static). The API hosts everything — static site + InstaQuote calculator + legacy-domain redirects — on a single Azure App Service via the stage→swap→prod GitHub Actions workflow at `.github/workflows/deploy.yml`. See the "InstaQuote — ported to C#" section below.
+
+## InstaQuote — ported to C#
+
+The legacy JavaScript calculator + PHP persistence layer has been replaced with a server-side implementation in `api/Quote/`:
+
+| Layer | File | Replaces |
+|---|---|---|
+| Item catalog (cubic-feet table) | `Quote/ItemCatalog.cs` | The `cubicFeet()` function in `instaquote.js` |
+| Calculator (drive time, crew, fuel, total) | `Quote/QuoteCalculator.cs` | The `calcHours()` function in `instaquote.js` |
+| Valuation tiers (insurance options) | `Quote/ValuationCalculator.cs` | The ACV/FV calculations at the top of `viewquote.php` |
+| Email body | `Quote/QuoteEmailRenderer.cs` | The plain-text body assembled in `viewquote.php` line 53–59 |
+| SMTP send | `Quote/SmtpQuoteEmailer.cs` | The `mail("economy1003@gmail.com", ...)` call in `viewquote.php` line 60 |
+| Receipt page | `Quote/ReceiptPageRenderer.cs` | The HTML `viewquote.php` rendered to the customer (Superior Moving branded, modernized UI) |
+| Form binding | `Quote/QuoteFormBinder.cs` | The `$_POST['LR_*']` field-by-field deserialization in `insert.php` |
+| Domain redirects | `Redirects/DomainRedirectMiddleware.cs` | Was not in scope of the legacy site — new infrastructure for the rename |
+
+### Feature flag
+
+`appsettings.json` controls whether the InstaQuote is shown or the simple lead form is shown:
+
+```json
+"Features": {
+  "Quote": {
+    "InstaQuote": true,
+    "Recipients": [ "matthew@meshent.com" ],
+    ...
+  }
+}
+```
+
+- **`InstaQuote = true`** — requests to `/quote.html` are 302-redirected to `/instaquote/` (the live calculator). Form posts to `/quote/submit` calculate, email staff, render the receipt.
+- **`InstaQuote = false`** — `/quote.html` falls through to the existing static lead form (mailto fallback). `/instaquote/` is still reachable but no email is sent on submit.
+
+### Configurable rate table
+
+The hourly rates from the 2022 legacy snapshot are in `appsettings.json` under `Features.Quote.HourlyRates`. Staff can update these without a code deploy. Same for fuel rate (`FuelPricePerGallon`), drive speed (`DriveSpeedMph`), weight-per-cubic-foot factor (`WeightLbsPerCubicFoot`), and all five valuation rates. **The defaults shipped are the 2022 numbers — reconfirm with the Wolfords before going live.**
+
+### Routes
+
+| Path | Behavior |
+|---|---|
+| `GET /` and `GET /*` | Static file from `wwwroot/superior-moving/` |
+| `GET /quote.html` | When `InstaQuote = true` → 302 to `/instaquote/`; else serves the static fallback |
+| `GET /instaquote/` | The modernized live-quote form |
+| `POST /api/quote/calculate` | JSON in/out — used by the page's JS for live price updates while the form is being filled |
+| `POST /quote/submit` | Calculate → email staff (`Features.Quote.Recipients`) → render receipt HTML |
+| `GET /health` | Returns `Healthy` (deploy contract — matches Vocab-Static) |
+| Any host in `Features.Redirects` | 301 to `{Target}{Path}{Query}` |
+
+### Email — staff notification
+
+When `Features.Quote.InstaQuote = true` and at least one recipient is configured, every submission sends an email to `Features.Quote.Recipients[]` with:
+
+- Customer name, phone, email, move date
+- From/to addresses and building details
+- Inventory totals by category + total cubic feet + estimated weight
+- Crew size, hourly rate, drive time, billable hours, fuel surcharge, total price
+- Bulky-item flag (3-person minimum)
+- Customer notes
+- The five valuation options that were shown to the customer
+
+SMTP credentials live under the `Smtp` section in `appsettings.json`. **Currently unset.** When you wire up a real SMTP server, populate `Host`, `Port`, `Username`, `Password`, `From`, `FromName`. If SMTP is unconfigured at submission time, the calculator still works and the receipt still renders — the staff email is silently skipped (and a warning is logged), so the customer never sees an error.
+
+### Customer flow vs. legacy
+
+| | Legacy (PHP + MySQL) | New (C#, no DB) |
+|---|---|---|
+| Fill inventory | `instaquoteapp.php` (1,500 lines, table-based layout) | `/instaquote/` (modernized — sticky sidebar live quote, collapsible room accordions, native HTML controls) |
+| See live price while filling | Yes (client-side JS) | Yes (debounced fetch to `/api/quote/calculate`) |
+| Submit | INSERT 175 cols into MySQL → redirect to `viewquote.php` | POST to `/quote/submit` → render receipt in response |
+| Receipt page | `viewquote.php?quote_id=N` (DB-backed permalink) | Rendered on the POST response (no permalink in v1) |
+| Customer can print | Yes | Yes (print stylesheet preserved) |
+| Staff notification | Email at submit time | Email at submit time |
+| Staff CRUD admin | `/admin/` (DW MX Kollection session auth — INSECURE; do not re-enable) | Not in scope for v1 — add when a DB is introduced |
+
+### Things still in scope but not v1
+
+- **Quote persistence + permalinks.** Without a DB, submitting + refreshing the receipt page would re-POST (browser warns "form resubmit"). For v2, add Azure SQL (or SQLite on the App Service local disk if cost is a concern) and switch to POST-Redirect-GET on `/quote/{ulid}`.
+- **Admin review queue.** Requires the DB above.
+- **Address autocomplete / mileage auto-calc** via Google Places + Routes API (deep-research report Phase-3 recommendation). Currently the customer types miles manually.
+- **CAPTCHA / spam protection.** Quote submissions are unprotected; add Turnstile or reCAPTCHA before driving paid traffic.
+- **Rate-limit the calculate API.** Currently any client can hammer `/api/quote/calculate` with no throttling. Low risk for a low-traffic site, but worth adding before any traffic spike.
+
+### Updated TODO before launch (supersedes the v1 list below)
+
+1. **Configure SMTP** in `api/appsettings.json` (or as Azure App Service Configuration secrets for production). Suggested: Microsoft 365 SMTP if `matthew@meshent.com` is on M365, or SendGrid free tier.
+2. **Reconfirm `Features.Quote.HourlyRates`, `FuelPricePerGallon`, and valuation rates** with the Wolfords. The shipped values are from the 2022 legacy snapshot.
+3. **Provision the Azure App Service** (`superior-moving` is the name in `.github/workflows/deploy.yml` — update if you choose a different name). Set up the `stage` slot and configure OIDC federated identity for the GitHub Actions secrets (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`, `AZURE_RESOURCE_GROUP`).
+4. **Point DNS** for `superiormoving.la`, `superioreconomymoving.com`, `superioreconomymoving.net`, and `economymoving.net` at the App Service. The redirect middleware handles the rest.
+5. **Sweep `<link rel="canonical">`** tags in the static HTML from `superioreconomymoving.com` to `superiormoving.la`.
+6. **Add CAPTCHA** to the InstaQuote form before opening it to public traffic.
+7. **Regenerate the four PDFs** with the new Superior Moving Co. branding (filenames currently retained for SEO continuity).
+8. **Rotate the exposed MySQL credential** from the legacy backup (this remains relevant only if you still have the legacy DB online).
+9. Optional: add a real database + permalink receipts + admin review queue when the family is ready to invest in that workflow.
 
 ## 1. Legacy lead-capture forms (PHP `mail()`)
 

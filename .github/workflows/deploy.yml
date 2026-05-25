@@ -1,0 +1,108 @@
+name: Deploy api to Azure App Service
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT_PATH: 'api/api.csproj'
+  PUBLISH_DIR: './publish'
+  # TODO: replace with the actual App Service name + slot once provisioned in Azure.
+  # Pattern matches Vocab-Static's deploy.yml.
+  WEBAPP_NAME: 'superior-moving'
+  STAGING_SLOT: 'stage'
+  HEALTH_PATH: '/health'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-quality: 'preview'
+
+      - name: Restore
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: Build (Release)
+        run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
+
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --no-build --output ${{ env.PUBLISH_DIR }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api
+          path: ${{ env.PUBLISH_DIR }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api
+          path: ${{ env.PUBLISH_DIR }}
+
+      - name: Azure login (OIDC federated)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to staging slot
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.WEBAPP_NAME }}
+          slot-name: ${{ env.STAGING_SLOT }}
+          package: ${{ env.PUBLISH_DIR }}
+
+      - name: Wait for staging health
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ env.WEBAPP_NAME }}-${{ env.STAGING_SLOT }}.azurewebsites.net${{ env.HEALTH_PATH }}" || true)
+            if [ "$code" = "200" ]; then
+              echo "Staging healthy after ${i} attempts"
+              exit 0
+            fi
+            echo "Attempt ${i}: HTTP ${code}, retrying in 10s..."
+            sleep 10
+          done
+          echo "Staging never reported healthy"
+          exit 1
+
+      - name: Swap staging to production
+        run: |
+          az webapp deployment slot swap \
+            --name ${{ env.WEBAPP_NAME }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --slot ${{ env.STAGING_SLOT }} \
+            --target-slot production
+
+      - name: Verify production
+        run: |
+          for path in "${{ env.HEALTH_PATH }}" "/"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "https://${{ env.WEBAPP_NAME }}.azurewebsites.net${path}")
+            if [ "$code" != "200" ]; then
+              echo "Production check ${path} returned ${code}"
+              exit 1
+            fi
+            echo "${path} → ${code}"
+          done

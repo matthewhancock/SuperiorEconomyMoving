@@ -6,3 +6,9 @@ Thumbs.db
 
 # Claude Code local settings (per-user permissions/state)
 .claude/
+
+# .NET build output
+bin/
+obj/
+publish/
+*.user

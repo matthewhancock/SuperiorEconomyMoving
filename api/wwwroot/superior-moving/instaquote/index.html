@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="InstaQuote — a real-time moving estimate from Superior Moving Co. Enter your inventory and we'll show your firm price, crew size, and hours on the spot." />
+  <link rel="canonical" href="https://superiormoving.la/instaquote/" />
+  <title>InstaQuote — Live Moving Estimate | Superior Moving</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/instaquote.css" />
+  <link rel="icon" href="/img/logo-transparent.png" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="top-bar"><div class="container top-bar__inner"><p class="top-bar__msg">Family-owned · 50+ years simplifying moves across Greater Los Angeles</p><a class="top-bar__link" href="tel:+18188846125">Call (818) 884-6125</a></div></div>
+    <div class="container header__row">
+      <a class="logo" href="/"><img class="logo__img" src="/img/logo-transparent.png" alt="Superior Moving Co. logo" width="56" height="56" /><span class="logo__text"><span class="logo__name">Superior Moving</span><span class="logo__tag">InstaQuote</span></span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span><span class="visually-hidden">Menu</span></button>
+      <nav class="nav" id="site-nav" data-nav>
+        <ul class="nav__list"><li><a href="/services/">Services</a></li><li><a href="/service-areas/">Service areas</a></li><li><a href="/resources/">Resources</a></li><li><a href="/about.html">About</a></li><li><a href="/reviews.html">Reviews</a></li></ul>
+        <div class="nav__cta"><a class="btn btn--ghost" href="tel:+18188846125">Call</a></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <p class="page-hero__eyebrow">InstaQuote</p>
+        <h1 class="page-hero__title">Get a <em>live</em> moving estimate</h1>
+        <p class="page-hero__lead">Enter what you're moving — pieces, boxes, addresses — and your price updates instantly. Submit when ready and we'll have a real person follow up within one business day.</p>
+      </div>
+    </section>
+
+    <nav class="crumbs" aria-label="Breadcrumb"><div class="container"><ol><li><a href="/">Home</a></li><li><span aria-current="page">InstaQuote</span></li></ol></div></nav>
+
+    <section class="section">
+      <div class="container">
+        <form id="instaquote-form" class="iq" action="/quote/submit" method="POST">
+          <div class="iq__layout">
+            <div class="iq__form">
+
+              <fieldset class="iq__fieldset">
+                <legend>1. Your move</legend>
+                <div class="iq__row">
+                  <div class="form__field">
+                    <label for="move_date">Move date <span class="hint">(approximate is fine)</span></label>
+                    <input type="date" id="move_date" name="move_date" />
+                  </div>
+                  <div class="form__field">
+                    <label for="miles">One-way miles <span class="req">*</span></label>
+                    <input type="number" id="miles" name="miles" min="0" max="3000" value="" placeholder="e.g., 25" required data-iq-recalc />
+                  </div>
+                </div>
+
+                <h3 class="iq__subheading">From</h3>
+                <div class="iq__row">
+                  <div class="form__field form__field--full">
+                    <label for="from_street">Street address</label>
+                    <input type="text" id="from_street" name="from_street" autocomplete="street-address" />
+                  </div>
+                </div>
+                <div class="iq__row iq__row--addr">
+                  <div class="form__field"><label for="from_city">City</label><input type="text" id="from_city" name="from_city" autocomplete="address-level2" /></div>
+                  <div class="form__field"><label for="from_state">State</label><input type="text" id="from_state" name="from_state" value="CA" maxlength="2" autocomplete="address-level1" /></div>
+                  <div class="form__field"><label for="from_zip">ZIP</label><input type="text" id="from_zip" name="from_zip" inputmode="numeric" maxlength="10" autocomplete="postal-code" /></div>
+                </div>
+                <div class="iq__row">
+                  <div class="form__field">
+                    <label for="from_home_type">Home type</label>
+                    <select id="from_home_type" name="from_home_type">
+                      <option value="">Select…</option>
+                      <option>House</option>
+                      <option>Apartment</option>
+                      <option>Condo</option>
+                      <option>Townhome</option>
+                      <option>Office</option>
+                      <option>Storage unit</option>
+                    </select>
+                  </div>
+                  <div class="form__field">
+                    <label for="from_bedrooms">Bedrooms</label>
+                    <select id="from_bedrooms" name="from_bedrooms">
+                      <option value="">N/A</option>
+                      <option>Studio</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+                    </select>
+                  </div>
+                  <div class="form__field">
+                    <label for="from_floor">Floor</label>
+                    <select id="from_floor" name="from_floor">
+                      <option value="">N/A</option>
+                      <option>Ground</option><option>2nd</option><option>3rd</option><option>4th</option><option>5th+</option><option>Elevator</option>
+                    </select>
+                  </div>
+                </div>
+
+                <h3 class="iq__subheading">To</h3>
+                <div class="iq__row">
+                  <div class="form__field form__field--full">
+                    <label for="to_street">Street address</label>
+                    <input type="text" id="to_street" name="to_street" />
+                  </div>
+                </div>
+                <div class="iq__row iq__row--addr">
+                  <div class="form__field"><label for="to_city">City</label><input type="text" id="to_city" name="to_city" /></div>
+                  <div class="form__field"><label for="to_state">State</label><input type="text" id="to_state" name="to_state" value="CA" maxlength="2" /></div>
+                  <div class="form__field"><label for="to_zip">ZIP</label><input type="text" id="to_zip" name="to_zip" inputmode="numeric" maxlength="10" /></div>
+                </div>
+                <div class="iq__row">
+                  <div class="form__field">
+                    <label for="to_home_type">Home type</label>
+                    <select id="to_home_type" name="to_home_type">
+                      <option value="">Select…</option>
+                      <option>House</option><option>Apartment</option><option>Condo</option><option>Townhome</option><option>Office</option><option>Storage unit</option>
+                    </select>
+                  </div>
+                  <div class="form__field">
+                    <label for="to_bedrooms">Bedrooms</label>
+                    <select id="to_bedrooms" name="to_bedrooms">
+                      <option value="">N/A</option><option>Studio</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+                    </select>
+                  </div>
+                  <div class="form__field">
+                    <label for="to_floor">Floor</label>
+                    <select id="to_floor" name="to_floor">
+                      <option value="">N/A</option><option>Ground</option><option>2nd</option><option>3rd</option><option>4th</option><option>5th+</option><option>Elevator</option>
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset class="iq__fieldset">
+                <legend>2. Your inventory</legend>
+                <p class="iq__hint">List every piece of furniture in your home. Click a section to expand it. The price updates live as you fill it in. <a href="/pdf/carton_guide.pdf">Need help counting boxes?</a></p>
+
+                <div id="iq-categories"><!-- categories rendered by instaquote.js --></div>
+
+                <details class="iq__category" open>
+                  <summary>Boxes</summary>
+                  <p class="iq__hint" style="padding:.5rem 1rem 0">Estimate is fine. Wardrobe boxes are provided free on the truck.</p>
+                  <div class="iq__items iq__items--boxes">
+                    <label class="iq__item"><span class="iq__item-name">Small box <em>(1.5 cu ft)</em></span><input type="number" name="box_small" min="0" value="" placeholder="0" data-iq-recalc /></label>
+                    <label class="iq__item"><span class="iq__item-name">Medium box <em>(3 cu ft)</em></span><input type="number" name="box_medium" min="0" value="" placeholder="0" data-iq-recalc /></label>
+                    <label class="iq__item"><span class="iq__item-name">Large box <em>(4.5 cu ft)</em></span><input type="number" name="box_large" min="0" value="" placeholder="0" data-iq-recalc /></label>
+                    <label class="iq__item"><span class="iq__item-name">Wardrobe box <em>(10 cu ft)</em></span><input type="number" name="box_wardrobe" min="0" value="" placeholder="0" data-iq-recalc /></label>
+                  </div>
+                </details>
+              </fieldset>
+
+              <fieldset class="iq__fieldset">
+                <legend>3. Contact info</legend>
+                <div class="iq__row">
+                  <div class="form__field"><label for="first_name">First name <span class="req">*</span></label><input type="text" id="first_name" name="first_name" autocomplete="given-name" required /></div>
+                  <div class="form__field"><label for="last_name">Last name <span class="req">*</span></label><input type="text" id="last_name" name="last_name" autocomplete="family-name" required /></div>
+                </div>
+                <div class="iq__row">
+                  <div class="form__field"><label for="phone">Phone <span class="req">*</span></label><input type="tel" id="phone" name="phone" autocomplete="tel" required /></div>
+                  <div class="form__field"><label for="email">Email <span class="req">*</span></label><input type="email" id="email" name="email" autocomplete="email" required /></div>
+                </div>
+                <div class="iq__row">
+                  <div class="form__field form__field--full">
+                    <label for="notes">Anything else we should know? <span class="hint">(stairs, COI, gated community, HOA, oversized items, special handling)</span></label>
+                    <textarea id="notes" name="notes" placeholder="Optional — but the more detail you give, the more accurate your quote."></textarea>
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="form__actions" style="margin-top:1.5rem">
+                <button type="submit" class="btn btn--primary btn--lg" id="iq-submit">Get my InstaQuote</button>
+                <a class="btn btn--ghost btn--lg" href="tel:+18188846125">Or call (818) 884-6125</a>
+              </div>
+              <p class="form__note">By submitting, you agree to be contacted about your moving request. We don't share your info. See our <a href="/privacy.html">privacy policy</a>.</p>
+            </div>
+
+            <aside class="iq__aside" aria-label="Live quote">
+              <div class="iq__quote-card" data-iq-quote>
+                <p class="iq__quote-label">Your estimate</p>
+                <p class="iq__quote-price" data-iq-price>—</p>
+                <p class="iq__quote-help" data-iq-status>Add a few items to see your price.</p>
+                <dl class="iq__quote-stats" hidden data-iq-stats>
+                  <div><dt>Pieces</dt><dd data-iq-pieces>0</dd></div>
+                  <div><dt>Cubic feet</dt><dd data-iq-cuft>0</dd></div>
+                  <div><dt>Crew</dt><dd data-iq-crew>—</dd></div>
+                  <div><dt>Billable hours</dt><dd data-iq-hours>—</dd></div>
+                  <div><dt>Drive time</dt><dd data-iq-drive>—</dd></div>
+                  <div><dt>Fuel</dt><dd data-iq-fuel>—</dd></div>
+                </dl>
+                <p class="iq__quote-disclaimer">Includes California double drive time per P.U.C. tariff. Final price depends on actual inventory at pickup.</p>
+              </div>
+              <div class="iq__quote-help-card">
+                <h3>How this works</h3>
+                <p>1. Tell us what you're moving and where.<br/>2. We calculate a firm estimate live as you type.<br/>3. We follow up to confirm dates and any building details.</p>
+                <p style="margin-top:.75rem"><a href="/resources/pricing-factors.html">How pricing works →</a></p>
+              </div>
+            </aside>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__bottom"><p>© Superior Moving Co. · <a href="tel:+18188846125">(818) 884-6125</a> · <a href="/privacy.html">Privacy</a></p></div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script src="/js/instaquote.js"></script>
+</body>
+</html>
