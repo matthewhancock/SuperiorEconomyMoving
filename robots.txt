@@ -1,0 +1,21 @@
+# robots.txt for Superior Moving Co.
+# https://superioreconomymoving.com/
+
+User-agent: *
+Allow: /
+
+# Block legacy admin/login paths from indexing if any 301s land here
+Disallow: /admin/
+Disallow: /login.php
+Disallow: /login_failed.php
+Disallow: /viewquote.php
+Disallow: /insert.php
+Disallow: /estimate.php
+Disallow: /contact_form.php
+Disallow: /get_an_online_moving_quote.php
+Disallow: /instaquoteapp.php
+
+# Block extraction scratch (should not be deployed, but defense in depth)
+Disallow: /.legacy-extract/
+
+Sitemap: https://superioreconomymoving.com/sitemap.xml

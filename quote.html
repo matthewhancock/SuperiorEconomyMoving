@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Request a written moving quote from Superior Moving — local, long-distance, office, or apartment moves in Greater Los Angeles. Same-day responses during business hours." />
+  <link rel="canonical" href="https://superioreconomymoving.com/quote.html" />
+  <title>Get a Moving Quote | Superior Moving | Los Angeles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="/img/logo-transparent.png" />
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://superioreconomymoving.com/"},
+    {"@type":"ListItem","position":2,"name":"Get a quote","item":"https://superioreconomymoving.com/quote.html"}
+  ]}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="top-bar"><div class="container top-bar__inner"><p class="top-bar__msg">Family-owned · 50+ years simplifying moves across Greater Los Angeles</p><a class="top-bar__link" href="tel:+18188846125">Call (818) 884-6125</a></div></div>
+    <div class="container header__row">
+      <a class="logo" href="/"><img class="logo__img" src="/img/logo-transparent.png" alt="Superior Moving Co. logo" width="56" height="56" /><span class="logo__text"><span class="logo__name">Superior Moving</span><span class="logo__tag">Los Angeles · Santa Clarita · Valley &amp; beyond</span></span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle><span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span><span class="nav-toggle__bar"></span><span class="visually-hidden">Menu</span></button>
+      <nav class="nav" id="site-nav" data-nav>
+        <ul class="nav__list"><li><a href="/services/">Services</a></li><li><a href="/service-areas/">Service areas</a></li><li><a href="/resources/">Resources</a></li><li><a href="/about.html">About</a></li><li><a href="/reviews.html">Reviews</a></li></ul>
+        <div class="nav__cta"><a class="btn btn--ghost" href="tel:+18188846125">Call</a><a class="btn btn--primary" href="/quote.html">Get a quote</a></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero"><div class="container">
+      <p class="page-hero__eyebrow">Get a quote</p>
+      <h1 class="page-hero__title">Request a written quote</h1>
+      <p class="page-hero__lead">Tell us about your move — we'll send a firm written estimate with crew size, hours, drive time, and total price. Most requests get a response within one business day.</p>
+      <div class="page-hero__actions"><a class="btn btn--outline" href="tel:+18188846125">Or call (818) 884-6125</a></div>
+    </div></section>
+    <nav class="crumbs" aria-label="Breadcrumb"><div class="container"><ol><li><a href="/">Home</a></li><li><span aria-current="page">Get a quote</span></li></ol></div></nav>
+
+    <section class="section"><div class="container"><div class="page-grid">
+      <div class="prose">
+        <h2>Tell us about your move</h2>
+        <p>The more accurate your inventory and addresses, the more accurate your quote. Don't worry if you don't have everything pinned down — we'll follow up by phone.</p>
+
+        <!--
+          TODO before launch:
+          Replace mailto: action with a real form endpoint (Formspree, Netlify Forms, Azure Static Web Apps API).
+          Add Turnstile/reCAPTCHA equivalent before driving paid traffic.
+          Consider building an inventory-grid intake later (the legacy InstaQuote had ~170 fields; ship a leaner v1 first).
+        -->
+        <form class="form" action="mailto:economy1003@gmail.com?subject=Web%20quote%20request" method="post" enctype="text/plain">
+          <h3 style="margin:1rem 0 0;color:var(--navy)">Your contact info</h3>
+          <div class="form__row">
+            <div class="form__field">
+              <label for="name">Name <span class="req">*</span></label>
+              <input type="text" id="name" name="name" required autocomplete="name" />
+            </div>
+            <div class="form__field">
+              <label for="phone">Phone <span class="req">*</span></label>
+              <input type="tel" id="phone" name="phone" required autocomplete="tel" />
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__field form__field--full">
+              <label for="email">Email <span class="req">*</span></label>
+              <input type="email" id="email" name="email" required autocomplete="email" />
+            </div>
+          </div>
+
+          <h3 style="margin:1.5rem 0 0;color:var(--navy)">Move details</h3>
+          <div class="form__row">
+            <div class="form__field">
+              <label for="move_type">Type of move <span class="req">*</span></label>
+              <select id="move_type" name="move_type" required>
+                <option value="">Select…</option>
+                <option>Local (within ~100 miles)</option>
+                <option>Long-distance (out of California)</option>
+                <option>Office / commercial</option>
+                <option>Apartment / condo</option>
+                <option>Packing only</option>
+                <option>Not sure — please advise</option>
+              </select>
+            </div>
+            <div class="form__field">
+              <label for="move_date">Preferred move date</label>
+              <input type="date" id="move_date" name="move_date" />
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__field">
+              <label for="origin">Origin address <span class="req">*</span></label>
+              <input type="text" id="origin" name="origin" required placeholder="Street, city, ZIP" />
+            </div>
+            <div class="form__field">
+              <label for="destination">Destination address <span class="req">*</span></label>
+              <input type="text" id="destination" name="destination" required placeholder="Street, city, ZIP" />
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__field">
+              <label for="origin_type">Origin building type</label>
+              <select id="origin_type" name="origin_type">
+                <option value="">Select…</option>
+                <option>House</option>
+                <option>Apartment / condo with elevator</option>
+                <option>Apartment / condo walk-up</option>
+                <option>Office / commercial</option>
+                <option>Storage unit</option>
+              </select>
+            </div>
+            <div class="form__field">
+              <label for="destination_type">Destination building type</label>
+              <select id="destination_type" name="destination_type">
+                <option value="">Select…</option>
+                <option>House</option>
+                <option>Apartment / condo with elevator</option>
+                <option>Apartment / condo walk-up</option>
+                <option>Office / commercial</option>
+                <option>Storage unit</option>
+              </select>
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__field">
+              <label for="bedrooms">Inventory size <span class="req">*</span></label>
+              <select id="bedrooms" name="bedrooms" required>
+                <option value="">Select…</option>
+                <option>Studio</option>
+                <option>1 bedroom</option>
+                <option>2 bedrooms</option>
+                <option>3 bedrooms</option>
+                <option>4 bedrooms</option>
+                <option>5+ bedrooms / large estate</option>
+                <option>Office (please describe below)</option>
+              </select>
+            </div>
+            <div class="form__field">
+              <label for="boxes">Approximate number of boxes <span class="hint">(use our <a href="/pdf/carton_guide.pdf">carton guide</a> if unsure)</span></label>
+              <input type="number" id="boxes" name="boxes" min="0" placeholder="e.g., 40" />
+            </div>
+          </div>
+
+          <h3 style="margin:1.5rem 0 0;color:var(--navy)">Anything special?</h3>
+          <div class="form__row">
+            <div class="form__field form__field--full">
+              <label for="bulky">Bulky / specialty items <span class="hint">(piano, pool table, gun safe, big-screen TV, large gym equipment)</span></label>
+              <input type="text" id="bulky" name="bulky" placeholder="e.g., upright piano + Peloton" />
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__field form__field--full">
+              <label for="packing">Do you need packing service?</label>
+              <select id="packing" name="packing">
+                <option value="">Select…</option>
+                <option>No — I'll pack everything</option>
+                <option>Yes — full pack</option>
+                <option>Yes — kitchen and fragiles only</option>
+                <option>Yes — fragiles only</option>
+                <option>Maybe — please advise</option>
+              </select>
+            </div>
+          </div>
+          <div class="form__row">
+            <div class="form__field form__field--full">
+              <label for="notes">Anything else we should know? <span class="hint">(stairs, COI requirements, HOA notification, gated community, tight parking, building move-in window, etc.)</span></label>
+              <textarea id="notes" name="notes" placeholder="The more detail you give, the more accurate the quote."></textarea>
+            </div>
+          </div>
+          <div class="form__actions">
+            <button type="submit" class="btn btn--primary btn--lg">Request quote</button>
+            <a class="btn btn--ghost btn--lg" href="tel:+18188846125">Or call (818) 884-6125</a>
+          </div>
+          <p class="form__note">By submitting, you agree to be contacted about your moving request. We don't share contact info with third parties. See our <a href="/privacy.html">privacy policy</a>.</p>
+        </form>
+      </div>
+      <aside class="aside">
+        <div class="aside__card"><h3>What happens next</h3><p>We review your request (usually same business day), then either email a written quote or call to clarify details. No high-pressure sales.</p></div>
+        <div class="aside__card"><h3>How pricing works</h3><p>See the full <a href="/resources/pricing-factors.html">California pricing explainer</a> for how crew size, drive time, and fuel surcharge are calculated.</p></div>
+        <div class="aside__card"><h3>Prefer to call?</h3><a class="btn btn--outline" href="tel:+18188846125">(818) 884-6125</a></div>
+        <div class="aside__card"><h3>Inventory help</h3><p>The <a href="/pdf/cube_sheet.pdf">DIY cube sheet</a> walks through every common item by room.</p></div>
+      </aside>
+    </div></div></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__cols">
+      <div class="site-footer__col"><p class="site-footer__brand">Superior Moving Co.</p><p class="site-footer__fine">Family-owned California movers serving Greater Los Angeles for 50+ years.</p><p class="site-footer__fine" style="margin-top:.65rem;"><a href="tel:+18188846125">(818) 884-6125</a></p></div>
+      <div class="site-footer__col"><h4>Services</h4><ul><li><a href="/services/local-moving-los-angeles.html">Local moving</a></li><li><a href="/services/long-distance-moving.html">Long-distance</a></li><li><a href="/services/office-commercial-moving.html">Office &amp; commercial</a></li><li><a href="/services/packing-unpacking.html">Packing</a></li><li><a href="/services/apartment-condo-moving.html">Apartment &amp; condo</a></li></ul></div>
+      <div class="site-footer__col"><h4>Service areas</h4><ul><li><a href="/service-areas/los-angeles.html">Los Angeles</a></li><li><a href="/service-areas/san-fernando-valley.html">San Fernando Valley</a></li><li><a href="/service-areas/santa-clarita.html">Santa Clarita</a></li><li><a href="/service-areas/northridge.html">Northridge</a></li><li><a href="/service-areas/sherman-oaks.html">Sherman Oaks</a></li><li><a href="/service-areas/woodland-hills.html">Woodland Hills</a></li></ul></div>
+      <div class="site-footer__col"><h4>Company</h4><ul><li><a href="/about.html">About</a></li><li><a href="/reviews.html">Reviews</a></li><li><a href="/contact.html">Contact</a></li><li><a href="/quote.html">Get a quote</a></li><li><a href="/resources/">Moving guides</a></li><li><a href="/licenses-and-insurance.html">Licenses &amp; insurance</a></li><li><a href="/privacy.html">Privacy</a></li></ul></div>
+    </div>
+    <div class="container site-footer__bottom"><p>© Superior Moving Co. All rights reserved. · <a href="https://www.checkbca.org/report/superior-moving-13061994" target="_blank" rel="noopener noreferrer">BCA report</a> · <a href="https://www.instagram.com/superioreconomymoving" target="_blank" rel="noopener noreferrer">Instagram</a></p></div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>
